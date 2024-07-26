@@ -3,12 +3,14 @@ import { TaskDto } from './dto/task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
+import { TodoSocketGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    private readonly todoSocketGateway: TodoSocketGateway,
   ) {}
 
   create({ description }: TaskDto) {
@@ -54,6 +56,7 @@ export class TaskService {
 
       todo.status = !todo.status;
 
+      this.todoSocketGateway.switchedState(todo);
       return this.taskRepository.save(todo);
     } catch (error) {
       throw new BadGatewayException(

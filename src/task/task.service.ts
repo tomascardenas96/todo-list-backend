@@ -2,7 +2,7 @@ import { Injectable, BadGatewayException } from '@nestjs/common';
 import { TaskDto } from './dto/task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { TodoSocketGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class TaskService {
     }
   }
 
-  findAll() {
+  findAll(): Promise<Task[]> {
     try {
       return this.taskRepository.find();
     } catch (error) {
@@ -34,7 +34,7 @@ export class TaskService {
   }
 
   //Metodo utilizado para encontrar el objeto deseado y posteriormente cambiarle el valor de la columna "isDone"
-  private findById(todoId: number) {
+  private findById(todoId: number): Promise<Task> {
     try {
       return this.taskRepository.findOne({ where: { todoId } });
     } catch (error) {
@@ -42,7 +42,7 @@ export class TaskService {
     }
   }
 
-  remove(todoId: number) {
+  remove(todoId: number): Promise<DeleteResult> {
     try {
       return this.taskRepository.delete(todoId);
     } catch (error) {
@@ -50,9 +50,9 @@ export class TaskService {
     }
   }
 
-  async switchTrueFalse(todoId: number) {
+  async switchTrueFalse(todoId: number): Promise<Task> {
     try {
-      const todo = await this.findById(todoId);
+      const todo: Task = await this.findById(todoId);
 
       todo.status = !todo.status;
 

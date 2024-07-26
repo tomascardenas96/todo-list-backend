@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  //Para permitir la comunicacion entre distintas aplicaciones
   app.enableCors();
 
   app.useGlobalPipes(
@@ -13,7 +15,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  
+
   await app.listen(3050);
 }
 bootstrap();

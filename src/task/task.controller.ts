@@ -10,28 +10,32 @@ import {
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { TaskDto } from './dto/task.dto';
+import { Task } from './entities/task.entity';
+import { DeleteResult } from 'typeorm';
 
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  create(@Body() taskDto: TaskDto) {
+  create(@Body() taskDto: TaskDto): Promise<Task> {
     return this.taskService.create(taskDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Task[]> {
     return this.taskService.findAll();
   }
 
   @Delete(':todoId')
-  remove(@Param('todoId', ParseIntPipe) todoId: number) {
+  remove(@Param('todoId', ParseIntPipe) todoId: number): Promise<DeleteResult> {
     return this.taskService.remove(todoId);
   }
 
   @Patch(':todoId')
-  switchTrueFalse(@Param('todoId', ParseIntPipe) todoId: number) {
+  switchTrueFalse(
+    @Param('todoId', ParseIntPipe) todoId: number,
+  ): Promise<Task> {
     return this.taskService.switchTrueFalse(todoId);
   }
 }
